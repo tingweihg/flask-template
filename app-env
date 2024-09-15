@@ -1,0 +1,16 @@
+# app 
+APP_NAME = flask_template
+APP_VERSION = 0.1
+USER = twh
+PASSWORD = 19921120
+
+# database
+POSTGRES_DB = flask_template
+POSTGRES_HOST = 170.100.0.6
+POSTGRES_PORT = 5432
+POSTGRES_USER = twh
+POSTGRES_PASSWORD = 19921120
+
+# pgadmin
+PGADMIN_EMAIL = twh@pgadmin.org
+PGADMIN_PASSWORD = 19921120

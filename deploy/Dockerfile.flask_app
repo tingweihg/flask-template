@@ -1,0 +1,10 @@
+FROM python:3.9-alpine
+
+COPY flask_app /home/flask_app
+COPY app-env /home
+COPY requirements.txt /home/flask_app
+
+WORKDIR /home/flask_app
+
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
