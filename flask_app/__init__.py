@@ -2,6 +2,8 @@ from flask import Flask
 from .config import Config, DevConfig, BaseConfig
 from .extensions import db, migrate, login_manager, my_logger, jwt
 
+def helloworld():
+    return "Hello World"
 
 def create_app(dev = False):
 
@@ -32,6 +34,9 @@ def create_app(dev = False):
 
         # register blueprint
         app.register_blueprint(auth_blueprint)
+
+        # for develope
+        app.add_url_rule("/", "helloworld", helloworld) 
 
 
     # done, start application
