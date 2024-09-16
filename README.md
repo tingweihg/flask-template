@@ -1,23 +1,35 @@
 # Environment
-Create virtual environment.
+Create virtual environment
 ```
 virtualenv .venv
+```
+#### install requirments
+For windows powershell
+```
 .\.venv\Scripts\activate
-pip install -r requirements.txt
-```
-Set environment variables.
-For powershell
-```
+pip install --no-cache-dir --ignore-installed -r requirements.txt
 $Env:FLASK_APP="flask_app:create_app"
 ```
-
 For linux/macos
 ```
+.\.venv\bin\activate
+pip install --no-cache-dir --ignore-installed -r requirements.txt
+$Env:FLASK_APP="flask_app:create_app"
 export FLASK_APP="flask_app:create_app"
 ```
-
-# App settings
-app-env
+## using macros
+For windows powershell
+```
+build_env.ps1
+set_env.ps1
+```
+For linux/macos
+```
+sh ./build_env.sh
+source ./set_env.sh
+```
+# App environment settings
+### using app-env file
 
 \# app 
 APP_NAME = flask_template
@@ -36,7 +48,7 @@ POSTGRES_PASSWORD = password
 PGADMIN_EMAIL = email
 PGADMIN_PASSWORD = password
 
-# Database
+# Database cli
 ```
 flask db init -m "init"
 flask db migrate
