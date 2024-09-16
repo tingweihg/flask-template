@@ -1,6 +1,7 @@
 # my dev stuff
 dev.sqlite
-log.*
+log*
+log/
 .dev*
 dev.db
 .test*
