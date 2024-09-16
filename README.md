@@ -54,7 +54,15 @@ flask db init -m "init"
 flask db migrate
 flask db upgrade
 ```
-
+# Start server for develope
+For windows powershell
+```
+start_server.ps1
+```
+For linux/macos
+```
+./start_server.sh
+```
 # Deployment
 ```
 docker-compose --env-file app-env up -d
