@@ -1,5 +1,4 @@
 from flask_app import create_app
-from flask_app.extensions import db
 
 if __name__ == '__main__':
 

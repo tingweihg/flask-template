@@ -2,13 +2,14 @@ from datetime import datetime, timezone
 from sqlalchemy import Integer, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 from werkzeug.security import generate_password_hash, check_password_hash
-# from flask_jwt_extended 
 from flask import current_app
 
-from flask_app.extensions import db, jwt
+from flask_app.extensions.database import db
+from flask_app.extensions.auth import jwt
+from flask_app.utils.models import BaseModel
 
 
-class User(db.Model):
+class User(BaseModel):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(primary_key = True, nullable=False)
@@ -23,18 +24,37 @@ class User(db.Model):
         self.user_name = user_name
         self.password_hash = generate_password_hash(password)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return 'id={}, user_name={}'.format(
             self.id, self.user_name
         )
     
+    @staticmethod
+    def add_user(user_name, password) -> bool:
+        if user_name == "" or password == "":
+            current_app.logger.warning('User({}) add failed, {}.'.format(user_name, 'user_name or password is empty.'))
+            return False
+        user = User.get_by_username(user_name)
+        if user is not None:
+            current_app.logger.warning('User({}) add failed, {}.'.format(user_name, 'user already exists.'))
+            return False
+        user = User(user_name, password)
+        try:
+            db.session.add(user)
+            db.session.commit()
+            current_app.logger.info('User({}) added.'.format(user_name))
+            return True
+        except Exception as e:
+            current_app.logger.warning('User({}) add failed, {}.'.format(user_name, e))
+            db.session.rollback()
+            return False
+
     
     @staticmethod
     def get_by_username(user_name):
-        with current_app.app_context():
-            return db.session.query(User).filter(
-                User.user_name == user_name
-            ).first()
+        return db.session.query(User).filter(
+            User.user_name == user_name
+        ).first()
     
     @staticmethod
     def get_by_id(user_id):
@@ -63,28 +83,8 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
     
-    def add_to_db(self):
-        try:
-            db.session.add(self)
-            db.session.commit()
-            current_app.logger.info('User({}) added.'.format(self.user_name))
-        except Exception as e:
-            print(f'Error: {e}')
-            current_app.logger.warning('User({}) add failed, {}.'.format(self.user_name, e))
-            db.session.rollback()
-
-    def delete_from_db(self):
-        try:
-            db.session.delete(self)
-            db.session.commit()
-            current_app.logger.info('User({}) deleted.'.format(self.user_name))
-        except Exception as e:
-            print(f'Error: {e}')
-            current_app.logger.warning('User({}) delete failed, {}.'.format(self.user_name, e))
-            db.session.rollback()
-    
-    def update(self):
-        db.session.commit()
+    def identity_name(self):
+        return self.user_name
     
     def to_json(self):
         return {

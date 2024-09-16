@@ -1,7 +1,6 @@
 # my dev stuff
 dev.sqlite
-log*
-logs/
+/flask_app/logs/
 .dev*
 dev.db
 .test*

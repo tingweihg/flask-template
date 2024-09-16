@@ -1,9 +1,4 @@
 import sys, os
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from flask_migrate import Migrate
-from flask_restful import Api
-from flask_jwt_extended import JWTManager
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
@@ -20,7 +15,7 @@ class MyLogger():
             app.logger.setLevel(logging.DEBUG)
 
         else:
-            log_dir = os.path.join(os.path.dirname(__file__), "logs")
+            log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
             if not os.path.isdir(log_dir):
                os.makedirs(log_dir)
 
@@ -33,10 +28,4 @@ class MyLogger():
             app.logger.addHandler(logger_handler)
             app.logger.setLevel(logging.INFO)
 
-
-
-db = SQLAlchemy()
-migrate = Migrate()
-login_manager = LoginManager()
-jwt = JWTManager()
 my_logger = MyLogger()

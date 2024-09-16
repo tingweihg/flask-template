@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, current_app
 from flask_app.auth.models import User
 from flask_jwt_extended import (create_access_token, create_refresh_token, set_access_cookies, unset_jwt_cookies, 
                                 get_jwt_identity, jwt_required, set_refresh_cookies, get_jwt)
-from flask_app.extensions import jwt
+from flask_app.extensions.auth import jwt
 from datetime import datetime, timezone, timedelta
 from time import strftime, localtime
 

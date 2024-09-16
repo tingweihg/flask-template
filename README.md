@@ -14,7 +14,6 @@ For linux/macos
 ```
 .\.venv\bin\activate
 pip install --no-cache-dir --ignore-installed -r requirements.txt
-$Env:FLASK_APP="flask_app:create_app"
 export FLASK_APP="flask_app:create_app"
 ```
 ## using macros

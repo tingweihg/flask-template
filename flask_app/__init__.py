@@ -1,15 +1,25 @@
 from flask import Flask
-from .config import Config, DevConfig, BaseConfig
-from .extensions import db, migrate, login_manager, my_logger, jwt
+from .config import Config, DevConfig
+
+# extensions
+from .extensions.auth import jwt
+from .extensions.database import db, migrate
+from .extensions.login import login_manager 
+from .extensions.logger import my_logger
+from .extensions.command import init_app_command
+
 
 def helloworld():
     return "Hello World"
 
 def create_app(dev = False):
 
-    config = Config()
+    config = None
     if dev is True:
-        config = DevConfig
+        config = DevConfig()
+    else:
+        config = Config()
+
 
     # set app configurations
     app = Flask(config.app_env["APP_NAME"], template_folder='templates')
@@ -22,11 +32,11 @@ def create_app(dev = False):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     jwt.init_app(app)
-    
-    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
         
     
     with app.app_context():
+
+        db.create_all()
         
         # 非常重要! 否則會出現 RuntimeError: Working outside of application context.
         from .auth.models import User
@@ -37,6 +47,9 @@ def create_app(dev = False):
 
         # for develope
         app.add_url_rule("/", "helloworld", helloworld) 
+
+        # init command
+        init_app_command(app)
 
 
     # done, start application

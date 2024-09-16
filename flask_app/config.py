@@ -20,7 +20,7 @@ class BaseConfig:
     JWT_COOKIE_CSRF_PROTECT = False # 沒有這行時，無法使用POST request
 
 
-    def __init__(self) -> None:
+    def __init__(self):
         
         # read app-env
         with open(os.path.join(pro_dir, 'app-env'), 'r') as file:
