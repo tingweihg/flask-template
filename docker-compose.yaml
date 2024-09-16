@@ -30,6 +30,7 @@ services:
       - app_data:/home
     environment:
       - FLASK_APP=/home/flask_app/wsgi:application
+      - FLASK_APP_LOG_DIR=/home/flask_app/logs
       - SECRET_KEY=${APP_NAME}-flask-app-secret-key
       - SQLALCHEMY_DATABASE_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
 
