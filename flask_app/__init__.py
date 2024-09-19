@@ -3,7 +3,7 @@ from .config import Config, DevConfig
 
 # extensions
 from .extensions.auth import jwt
-from .extensions.database import db, migrate
+from .extensions.database import db, migrate, init_user_role, init_default_users
 from .extensions.login import login_manager 
 from .extensions.logger import my_logger
 from .extensions.command import init_app_command
@@ -39,14 +39,18 @@ def create_app(dev = False):
         db.create_all()
         
         # 非常重要! 否則會出現 RuntimeError: Working outside of application context.
-        from .auth.models import User
-        from .api.auth import auth_blueprint
+        # from flask_app.auth.models.user import User
+        from flask_app.api.auth import auth_blueprint
 
         # register blueprint
         app.register_blueprint(auth_blueprint)
 
         # for develope
         app.add_url_rule("/", "helloworld", helloworld) 
+
+        # init user and user role
+        init_default_users(app)
+        init_user_role(app)
 
         # init command
         init_app_command(app)

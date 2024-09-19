@@ -9,6 +9,7 @@ from flask_app.extensions.auth import jwt
 from flask_app.utils.models import BaseModel
 
 
+
 class User(BaseModel):
     __tablename__ = "user"
 
@@ -18,27 +19,43 @@ class User(BaseModel):
     create_time: Mapped[str] = mapped_column(default = datetime.now(timezone.utc).isoformat(), nullable=False)
     update_time: Mapped[str] = mapped_column(default = datetime.now(timezone.utc).isoformat(), 
                                              onupdate=datetime.now(timezone.utc).isoformat(), 
-                                             nullable=False)
+                                             nullable=False)    
+    user_role_id: Mapped[int] = mapped_column(Integer, db.ForeignKey('user_role.id'), nullable=False)
 
-    def __init__(self, user_name, password):
+    def __init__(self, user_name, password, role):
         self.user_name = user_name
         self.password_hash = generate_password_hash(password)
+        
+        from flask_app.auth.models.role import UserRole
+        self.user_role_id = UserRole.get_by_name(role).id   
 
     def __repr__(self):
-        return 'id={}, user_name={}'.format(
-            self.id, self.user_name
+        return 'id={}, user_name={}, role={}'.format(
+            self.id, self.user_name, self.role.role_name
         )
     
     @staticmethod
-    def add_user(user_name, password) -> bool:
+    def add_user(user_name, password, role) -> bool:
+
+        # check user_name and password
         if user_name == "" or password == "":
             current_app.logger.warning('User({}) add failed, {}.'.format(user_name, 'user_name or password is empty.'))
             return False
-        user = User.get_by_username(user_name)
+        user = User.get_by_user_name(user_name)
+
+        # check if user exists
         if user is not None:
             current_app.logger.warning('User({}) add failed, {}.'.format(user_name, 'user already exists.'))
             return False
-        user = User(user_name, password)
+        user = User(user_name, password, role)
+
+        # check role
+        from flask_app.auth.models.role import UserRole
+        choices = UserRole.choices()
+        if role not in choices:
+            current_app.logger.warning('User({}) add failed, {}.'.format(user_name, 'role not exists.'))
+            return False
+
         try:
             db.session.add(user)
             db.session.commit()
@@ -51,7 +68,7 @@ class User(BaseModel):
 
     
     @staticmethod
-    def get_by_username(user_name):
+    def get_by_user_name(user_name):
         return db.session.query(User).filter(
             User.user_name == user_name
         ).first()
@@ -61,6 +78,11 @@ class User(BaseModel):
         return db.session.query(User).filter(
             User.id == user_id
         ).first()
+
+    @staticmethod
+    def get_by_role(role_name):  
+        all_users = db.session.query(User).all()
+        return [user for user in all_users if user.role.role_name == role_name]
 
     @staticmethod
     def get_user_list():
