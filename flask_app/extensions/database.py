@@ -23,8 +23,5 @@ def init_user_role(app):
 def init_default_users(app):
     from flask_app.auth.models.user import User
     twh_user = User.get_by_user_name("twh")
-    k100_user = User.get_by_user_name("k100")
     if twh_user == None:
         User.add_user("twh", "19921120", "admin")
-    if k100_user == None:
-        User.add_user("k100", "MCL02750963", "moderator")
