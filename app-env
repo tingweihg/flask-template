@@ -1,6 +1,6 @@
 # app 
 APP_NAME = flask_template
-APP_VERSION = 0.1
+APP_VERSION = 0.0
 USER = twh
 PASSWORD = 19921120
 
