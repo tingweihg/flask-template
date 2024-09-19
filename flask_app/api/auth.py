@@ -31,7 +31,7 @@ def login():
     refresh_token = create_refresh_token(identity=user_name, expires_delta=current_app.config["JWT_REFRESH_TOKEN_EXPIRES"])
     
     response = jsonify(status=200, 
-                       msg="Login successful for {}.".format(user_name), 
+                       msg="Login successful ({}).".format(user_name), 
                        time=datetime.now(timezone.utc).isoformat(),
                        access_token=access_token,
                        user_name=user_name) 
@@ -40,7 +40,7 @@ def login():
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
     
-    current_app.logger.info("Login successful for {}.".format(user_name))
+    current_app.logger.info("Login successful ({}).".format(user_name))
     return response, 200
 
 # logout
@@ -48,7 +48,7 @@ def login():
 def logout():
     identity = get_jwt_identity()
     response = jsonify(status=200, 
-                       msg="Logout successful for {}.".format(identity), 
+                       msg="Logout successful ({}).".format(identity), 
                        time=datetime.now(timezone.utc).isoformat()) 
     unset_jwt_cookies(response)
     response.delete_cookie("access_token")
@@ -67,7 +67,7 @@ def refresh_expiring_jwts(response):
             identity = get_jwt_identity()
             access_token = create_access_token(identity=identity, expires_delta=current_app.config["JWT_EXPIRATION_DELTA"])
             set_access_cookies(response, access_token)
-            current_app.logger.info("Auto refresh access token for {}.".format(identity))
+            current_app.logger.info("Auto refresh access token ({}).".format(identity))
     except (RuntimeError, KeyError):
         pass
     return response
@@ -84,7 +84,7 @@ def refresh():
                        access_token=access_token,
                        user_name=identity) 
     set_access_cookies(response, access_token)
-    current_app.logger.info("Refresh token for {}.".format(identity))
+    current_app.logger.info("Refresh token ({}).".format(identity))
     return response, 200
 
 

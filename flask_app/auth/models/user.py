@@ -35,6 +35,23 @@ class User(BaseModel):
         )
     
     @staticmethod
+    def update_user(user_name, password, role) -> bool:
+        user = User.get_by_user_name(user_name)
+        if user == None:
+            current_app.logger.warning('User({}) update failed, {}.'.format(user_name, 'user not exists.')) 
+            return False
+        if password is not None:
+            user.set_password(password)
+        from flask_app.auth.models.role import UserRole
+        if role in UserRole.choices():
+            user.user_role_id = UserRole.get_by_name(role).id
+        user.update_time = datetime.now(timezone.utc).isoformat()
+        # user.add_to_db()
+        db.session.commit()
+        current_app.logger.info('User({}) updated.'.format(user_name))
+        return True
+    
+    @staticmethod
     def add_user(user_name, password, role) -> bool:
 
         # check user_name and password

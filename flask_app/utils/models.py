@@ -19,7 +19,7 @@ class BaseModel(db.Model):
             current_app.logger.warning('{} ({}) add failed, {}.'.format(self.__class__.__name__, self.identity_name(), e))
             db.session.rollback()
 
-    def delete_to_db(self):
+    def delete_from_db(self):
         try:
             db.session.delete(self)
             db.session.commit()

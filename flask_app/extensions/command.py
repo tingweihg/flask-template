@@ -40,6 +40,36 @@ def init_app_command(app):
     def add_user(user_name, password, role): 
         '''Add user'''
         return User.add_user(user_name, password, role)
+    
+    @app.cli.command("user-delete")
+    @click.option("-u", "--user_name", "user_name", required=True, help="User name")
+    def delete_user(user_name):
+        '''Delete user'''
+        User.delete_from_db(user_name)
+
+    @app.cli.command("user-update")
+    @click.option("-u", "--user_name", "user_name", required=True, help="User name")
+    @click.option("-p", "--password", "password", help="User password")
+    @click.option("-r", "--role", "role", type=click.Choice(UserRole.choices()), help="User role")
+    def update_user(user_name, password, role):
+        '''Update user'''
+        User.update_user(user_name, password, role)
+
+    
+    @app.cli.command("user-set-role")
+    @click.option("-u", "--user_name", "user_name", required=True, help="User name")
+    @click.option("-r", "--role", "role", required=True, type=click.Choice(UserRole.choices()), help="User role")
+    def update_user(user_name, role):
+        '''Set user role'''
+        User.update_user(user_name, None, role)
+        
+    
+    @app.cli.command("user-set-password")
+    @click.option("-u", "--user_name", "user_name", required=True, help="User name")
+    @click.option("-p", "--password", "password", required=True, help="User password")
+    def update_user(user_name, password):
+        '''Set user password'''
+        User.update_user(user_name, password, None)
 
     # show all users
     @app.cli.command("user-show-all")
