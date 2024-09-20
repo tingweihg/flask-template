@@ -13,10 +13,10 @@ class BaseConfig:
     # jwt
     JWT_SECRET_KEY = SECRET_KEY + "-jwt"
     JWT_EXPIRATION_DELTA = timedelta(minutes=20)
-    JWT_REFRESH_TOKEN_EXPIRES = timedelta(seconds=30)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(hours=6)
     JWT_AUTH_URL_RULE = '/auth/login'
     JWT_AUTH_HEADER_PREFIX = 'twh-flask-jwt'
-    JWT_TOKEN_LOCATION = ["headers", "cookies", "json"]
+    JWT_TOKEN_LOCATION = ["cookies", "headers", "json"]
     JWT_COOKIE_CSRF_PROTECT = False # 沒有這行時，無法使用POST request
 
 

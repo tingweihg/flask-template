@@ -3,14 +3,15 @@ from .config import Config, DevConfig
 
 # extensions
 from .extensions.auth import jwt
-from .extensions.database import db, migrate, init_user_role, init_default_users
+from .extensions.database import db, migrate
 from .extensions.login import login_manager 
 from .extensions.logger import my_logger
-from .extensions.command import init_app_command
 
 
 def helloworld():
     return "Hello World"
+
+
 
 def create_app(dev = False):
 
@@ -35,25 +36,34 @@ def create_app(dev = False):
         
     
     with app.app_context():
+        
+        from flask_app.auth.models.role import UserRole
+        from flask_app.auth.models.user import User
 
         db.create_all()
         
-        # 非常重要! 否則會出現 RuntimeError: Working outside of application context.
-        # from flask_app.auth.models.user import User
-        from flask_app.api.auth import auth_blueprint
-
-        # register blueprint
-        app.register_blueprint(auth_blueprint)
+        # import all models
+        from .extensions.command import init_app_command
+        from .extensions.database import (init_user_role, 
+                                          init_default_users)
+        
+        # init user and user role
+        init_user_role(app)
+        init_default_users(app)
+        
+        # import api blueprint
+        from flask_app.api import api_blueprint
+        app.register_blueprint(api_blueprint)
 
         # for develope
         app.add_url_rule("/", "helloworld", helloworld) 
 
-        # init user and user role
-        init_default_users(app)
-        init_user_role(app)
-
         # init command
         init_app_command(app)
+        
+        # print all routes
+        # for rule in app.url_map.iter_rules():
+            # print(f"Endpoint: {rule.endpoint}, URL: {rule}")
 
 
     # done, start application
